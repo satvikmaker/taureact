@@ -46,6 +46,7 @@ export interface UpdateProgress {
 export interface IpcSchema {
   get_app_version: { args: []; return: string };
   get_app_path: { args: [name: string]; return: string };
+  app_ready: { args: []; return: void };
   report_error: { args: [report: ErrorReport]; return: void };
   settings_get: { args: [key: string]; return: unknown };
   settings_set: { args: [key: string, value: unknown]; return: void };

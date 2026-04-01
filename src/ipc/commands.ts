@@ -19,6 +19,7 @@ type CommandReturn<C extends keyof IpcSchema> = IpcSchema[C]["return"];
 const ARG_NAMES: Record<keyof IpcSchema, string[]> = {
   get_app_version: [],
   get_app_path: ["name"],
+  app_ready: [],
   report_error: ["report"],
   settings_get: ["key"],
   settings_set: ["key", "value"],
@@ -52,6 +53,7 @@ export async function ipcInvoke<C extends keyof IpcSchema>(
 export const ipc = {
   getAppVersion: () => ipcInvoke("get_app_version"),
   getAppPath: (name: string) => ipcInvoke("get_app_path", name),
+  appReady: () => ipcInvoke("app_ready"),
   reportError: (report: { message: string; stack?: string; componentStack?: string }) =>
     ipcInvoke("report_error", report),
   settingsGet: (key: string) => ipcInvoke("settings_get", key),

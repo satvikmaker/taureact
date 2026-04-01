@@ -33,6 +33,30 @@ pub struct ErrorReport {
     pub component_stack: Option<String>,
 }
 
+/// Called by the frontend once React has mounted.
+/// Closes the splash screen and shows the main window.
+#[tauri::command]
+pub fn app_ready(app: AppHandle) {
+    if let Some(splash) = app.get_webview_window("splash") {
+        if let Err(e) = splash.close() {
+            log::error!("Failed to close splash window: {}", e);
+        }
+    }
+    if let Some(main_win) = app.get_webview_window("main") {
+        if let Err(e) = main_win.show() {
+            log::error!("Failed to show main window: {}", e);
+        }
+        if let Err(e) = main_win.set_focus() {
+            log::warn!("Failed to focus main window: {}", e);
+        }
+
+        // DEBUG_PROD: open devtools in production builds when env var is set
+        if std::env::var("DEBUG_PROD").unwrap_or_default() == "true" {
+            main_win.open_devtools();
+        }
+    }
+}
+
 #[tauri::command]
 pub fn report_error(report: ErrorReport) {
     log::error!(

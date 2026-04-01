@@ -33,3 +33,8 @@ createRoot(document.getElementById("root")!).render(
     </ErrorBoundary>
   </StrictMode>
 );
+
+// ── Dismiss splash screen ────────────────────────────────────────────
+// Signal to Rust that the frontend has mounted. This closes the splash
+// window and shows the main window.
+ipc.appReady().catch(console.error);

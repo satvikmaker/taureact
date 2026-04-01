@@ -38,9 +38,12 @@ export function DropZone({
 }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const onDropRef = useRef(onDrop);
-  onDropRef.current = onDrop;
   const acceptRef = useRef(accept);
-  acceptRef.current = accept;
+
+  useEffect(() => {
+    onDropRef.current = onDrop;
+    acceptRef.current = accept;
+  });
 
   useEffect(() => {
     const unlisten = getCurrentWindow().onDragDropEvent(async (event) => {
