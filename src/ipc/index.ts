@@ -1,10 +1,8 @@
-export { ipc, ipcInvoke } from "./commands";
+export { ipc } from "./commands";
 export { ipcListen } from "./events";
 export type {
-  IpcSchema,
-  IpcPushEvents,
   FileMetadata,
-  ErrorReport,
   UpdateInfo,
   UpdateProgress,
+  ContextMenuItem,
 } from "./schema";

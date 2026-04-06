@@ -74,4 +74,58 @@ describe("ipc commands", () => {
       path: "/tmp/img.png",
     });
   });
+
+  it("openWindow passes name and route", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.openWindow("secondary", "/details");
+    expect(invoke).toHaveBeenCalledWith("open_window", {
+      name: "secondary",
+      route: "/details",
+    });
+  });
+
+  it("showContextMenu passes window label and items", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.showContextMenu("main", [
+      { id: "copy", label: "Copy" },
+    ]);
+    expect(invoke).toHaveBeenCalledWith("show_context_menu", {
+      windowLabel: "main",
+      items: [{ id: "copy", label: "Copy" }],
+    });
+  });
+
+  it("secureSet passes key and value", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.secureSet("api-key", "secret123");
+    expect(invoke).toHaveBeenCalledWith("secure_set", {
+      key: "api-key",
+      value: "secret123",
+    });
+  });
+
+  it("secureGet passes key", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce("secret123");
+    const result = await ipc.secureGet("api-key");
+    expect(invoke).toHaveBeenCalledWith("secure_get", { key: "api-key" });
+    expect(result).toBe("secret123");
+  });
+
+  it("secureDelete passes key", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.secureDelete("api-key");
+    expect(invoke).toHaveBeenCalledWith("secure_delete", { key: "api-key" });
+  });
+
+  it("setProgress passes value", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.setProgress(0.5);
+    expect(invoke).toHaveBeenCalledWith("set_progress", { value: 0.5 });
+  });
+
+  it("setProgress passes null to clear", async () => {
+    vi.mocked(invoke).mockResolvedValueOnce(undefined);
+    await ipc.setProgress(null);
+    expect(invoke).toHaveBeenCalledWith("set_progress", { value: null });
+  });
 });

@@ -1,0 +1,61 @@
+{
+  "app": {
+    "title": "TauReact",
+    "version": "v{{version}}"
+  },
+  "nav": {
+    "home": "Inicio",
+    "settings": "Configuraci\u00f3n",
+    "about": "Acerca de"
+  },
+  "theme": {
+    "title": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "settings": {
+    "appearance": "Apariencia",
+    "general": "General",
+    "autoLaunch": "Iniciar con el sistema",
+    "autoLaunchDesc": "Iniciar TauReact autom\u00e1ticamente al iniciar sesi\u00f3n",
+    "telemetry": "Telemetr\u00eda de errores",
+    "telemetryDesc": "Enviar informes de errores an\u00f3nimos para mejorar la app"
+  },
+  "ipc": {
+    "title": "Demo IPC",
+    "ping": "Ping",
+    "response": "Respuesta:"
+  },
+  "fileDrop": {
+    "title": "Soltar im\u00e1genes",
+    "hint": "Arrastra y suelta im\u00e1genes aqu\u00ed para previsualizar",
+    "dropHere": "Suelta las im\u00e1genes aqu\u00ed"
+  },
+  "fileDialog": {
+    "title": "Di\u00e1logos de archivos",
+    "open": "Abrir archivo",
+    "save": "Guardar archivo"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "send": "Enviar notificaci\u00f3n",
+    "sent": "\u00a1Notificaci\u00f3n enviada!"
+  },
+  "language": {
+    "title": "Idioma"
+  },
+  "about": {
+    "description": "Un boilerplate de aplicaci\u00f3n de escritorio listo para producci\u00f3n, construido con Tauri, React, TypeScript y Tailwind CSS."
+  },
+  "offline": {
+    "message": "Est\u00e1s sin conexi\u00f3n"
+  },
+  "updater": {
+    "available": "Actualizaci\u00f3n disponible: v{{version}}",
+    "downloading": "Descargando actualizaci\u00f3n...",
+    "ready": "Actualizaci\u00f3n lista para instalar",
+    "restart": "Reiniciar y actualizar",
+    "failed": "Actualizaci\u00f3n fallida"
+  }
+}

@@ -1,5 +1,8 @@
 pub mod app;
+pub mod context_menu;
 pub mod file;
+pub mod keyring;
+pub mod progress;
 pub mod settings;
 pub mod window;
 

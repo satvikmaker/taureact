@@ -1,27 +1,32 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useUpdaterStore } from "@/store";
 import { ipcListen } from "@/ipc";
 import { relaunch } from "@tauri-apps/plugin-process";
 
 export function UpdaterUI() {
+  const { t } = useTranslation();
   const status = useUpdaterStore((s) => s.status);
   const info = useUpdaterStore((s) => s.info);
   const progress = useUpdaterStore((s) => s.progress);
+  const error = useUpdaterStore((s) => s.error);
   const setAvailable = useUpdaterStore((s) => s.setAvailable);
   const setProgress = useUpdaterStore((s) => s.setProgress);
   const setDownloaded = useUpdaterStore((s) => s.setDownloaded);
+  const setError = useUpdaterStore((s) => s.setError);
 
   useEffect(() => {
     const unsubs = [
       ipcListen("updater:available", setAvailable),
       ipcListen("updater:progress", setProgress),
       ipcListen("updater:downloaded", () => setDownloaded()),
+      ipcListen("updater:error", (payload) => setError(payload.message)),
     ];
 
     return () => {
       unsubs.forEach((p) => p.then((fn) => fn()));
     };
-  }, [setAvailable, setProgress, setDownloaded]);
+  }, [setAvailable, setProgress, setDownloaded, setError]);
 
   if (status === "idle" || status === "checking") return null;
 
@@ -32,16 +37,16 @@ export function UpdaterUI() {
     >
       {status === "available" && info && (
         <div className="flex items-center gap-3">
-          <span>Update available: v{info.version}</span>
+          <span>{t("updater.available", { version: info.version })}</span>
           <span className="text-zinc-500 dark:text-zinc-400">
-            Downloading...
+            {t("updater.downloading")}
           </span>
         </div>
       )}
 
       {status === "downloading" && progress && (
         <div className="flex items-center gap-3">
-          <span>Downloading update...</span>
+          <span>{t("updater.downloading")}</span>
           <div className="flex-1 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-600 dark:bg-blue-500 transition-[width] duration-200"
@@ -55,19 +60,22 @@ export function UpdaterUI() {
 
       {status === "ready" && (
         <div className="flex items-center gap-3">
-          <span>Update ready to install</span>
+          <span>{t("updater.ready")}</span>
           <button
             className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-xs cursor-pointer transition-colors"
             onClick={() => relaunch().catch(console.error)}
           >
-            Restart &amp; Update
+            {t("updater.restart")}
           </button>
         </div>
       )}
 
       {status === "error" && (
         <div className="flex items-center gap-3 text-red-500">
-          <span>Update failed</span>
+          <span>
+            {t("updater.failed")}
+            {error ? `: ${error}` : ""}
+          </span>
         </div>
       )}
     </div>

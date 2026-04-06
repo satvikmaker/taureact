@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ipc, type FileMetadata } from "@/ipc";
 
@@ -36,6 +37,7 @@ export function DropZone({
   className = "",
   accept = IMAGE_EXTENSIONS,
 }: DropZoneProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const onDropRef = useRef(onDrop);
   const acceptRef = useRef(accept);
@@ -75,16 +77,29 @@ export function DropZone({
         try {
           const metadata = await ipc.getFileMetadata(paths);
 
-          // Read each file via Rust and create blob URLs for preview
-          const images: DroppedImage[] = await Promise.all(
+          // Read each file individually — don't let one failure kill the batch
+          const results = await Promise.allSettled(
             metadata.map(async (meta) => {
               const bytes = await ipc.readFileBytes(meta.path);
               const blob = new Blob([bytes], { type: mimeFromPath(meta.path) });
-              return { meta, previewUrl: URL.createObjectURL(blob) };
+              return { meta, previewUrl: URL.createObjectURL(blob) } as DroppedImage;
             })
           );
 
-          onDropRef.current(images);
+          const images = results
+            .filter((r): r is PromiseFulfilledResult<DroppedImage> => r.status === "fulfilled")
+            .map((r) => r.value);
+
+          if (images.length > 0) {
+            onDropRef.current(images);
+          }
+
+          // Log any failures
+          results.forEach((r, i) => {
+            if (r.status === "rejected") {
+              console.warn(`Failed to read file "${metadata[i]?.name}":`, r.reason);
+            }
+          });
         } catch (err) {
           console.error("Failed to process dropped files:", err);
         }
@@ -107,8 +122,8 @@ export function DropZone({
       {children ?? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           {isDragging
-            ? "Drop images here"
-            : "Drag & drop images here to preview"}
+            ? t("fileDrop.dropHere", "Drop images here")
+            : t("fileDrop.hint")}
         </p>
       )}
     </div>

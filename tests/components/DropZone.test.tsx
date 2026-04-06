@@ -22,9 +22,8 @@ describe("DropZone", () => {
 
   it("renders default text", () => {
     render(<DropZone onDrop={vi.fn()} />);
-    expect(
-      screen.getByText("Drag & drop images here to preview")
-    ).toBeInTheDocument();
+    // i18n not initialized in tests — key appears as-is
+    expect(screen.getByText("fileDrop.hint")).toBeInTheDocument();
   });
 
   it("renders children when provided", () => {

@@ -37,6 +37,10 @@
     "os:default",
     "process:default",
     "deep-link:default",
-    "dialog:default"
+    "dialog:default",
+    "notification:default",
+    "global-shortcut:default",
+    "autostart:default",
+    "sql:default"
   ]
 }

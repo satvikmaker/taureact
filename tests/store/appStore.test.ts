@@ -6,6 +6,7 @@ describe("appStore", () => {
     useAppStore.setState({
       version: "0.0.0",
       isMaximized: false,
+      lastRoute: "/",
       isOnline: true,
       platform: "unknown",
     });
@@ -15,6 +16,7 @@ describe("appStore", () => {
     const state = useAppStore.getState();
     expect(state.version).toBe("0.0.0");
     expect(state.isMaximized).toBe(false);
+    expect(state.lastRoute).toBe("/");
     expect(state.platform).toBe("unknown");
   });
 
@@ -26,6 +28,11 @@ describe("appStore", () => {
   it("setMaximized updates isMaximized", () => {
     useAppStore.getState().setMaximized(true);
     expect(useAppStore.getState().isMaximized).toBe(true);
+  });
+
+  it("setLastRoute updates lastRoute", () => {
+    useAppStore.getState().setLastRoute("/settings");
+    expect(useAppStore.getState().lastRoute).toBe("/settings");
   });
 
   it("setOnline updates isOnline", () => {

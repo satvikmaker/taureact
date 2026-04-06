@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { useOnline } from "@/hooks";
 
 const ENABLED = import.meta.env.VITE_ENABLE_OFFLINE_INDICATOR === "true";
 
 export function OfflineIndicator() {
+  const { t } = useTranslation();
   const isOnline = useOnline();
 
   if (!ENABLED || isOnline) return null;
@@ -26,7 +28,7 @@ export function OfflineIndicator() {
           strokeLinecap="round"
         />
       </svg>
-      <span>You are offline</span>
+      <span>{t("offline.message")}</span>
     </div>
   );
 }

@@ -40,6 +40,63 @@ vi.mock("@tauri-apps/plugin-process", () => ({
   relaunch: vi.fn(),
 }));
 
-vi.mock("@tauri-apps/plugin-store", () => ({
-  Store: vi.fn(),
+vi.mock("@tauri-apps/plugin-store", () => {
+  const mockStoreInstance = {
+    get: vi.fn(() => Promise.resolve(null)),
+    set: vi.fn(),
+    save: vi.fn(() => Promise.resolve()),
+    delete: vi.fn(),
+  };
+  return {
+    Store: {
+      load: vi.fn(() => Promise.resolve(mockStoreInstance)),
+    },
+  };
+});
+
+vi.mock("@tauri-apps/plugin-notification", () => ({
+  isPermissionGranted: vi.fn(() => Promise.resolve(true)),
+  requestPermission: vi.fn(() => Promise.resolve("granted")),
+  sendNotification: vi.fn(),
+}));
+
+vi.mock("@tauri-apps/plugin-dialog", () => ({
+  open: vi.fn(() => Promise.resolve(null)),
+  save: vi.fn(() => Promise.resolve(null)),
+  ask: vi.fn(() => Promise.resolve(false)),
+  confirm: vi.fn(() => Promise.resolve(false)),
+  message: vi.fn(() => Promise.resolve()),
+}));
+
+vi.mock("@tauri-apps/plugin-global-shortcut", () => ({
+  register: vi.fn(),
+  unregister: vi.fn(),
+  unregisterAll: vi.fn(),
+}));
+
+vi.mock("@tauri-apps/plugin-autostart", () => ({
+  enable: vi.fn(() => Promise.resolve()),
+  disable: vi.fn(() => Promise.resolve()),
+  isEnabled: vi.fn(() => Promise.resolve(false)),
+}));
+
+vi.mock("@tauri-apps/plugin-sql", () => {
+  const mockDb = {
+    execute: vi.fn(() => Promise.resolve({ rowsAffected: 0, lastInsertId: 0 })),
+    select: vi.fn(() => Promise.resolve([])),
+    close: vi.fn(),
+  };
+  return {
+    default: { load: vi.fn(() => Promise.resolve(mockDb)) },
+  };
+});
+
+vi.mock("@tauri-apps/plugin-log", () => ({
+  trace: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  attachConsole: vi.fn(() => Promise.resolve(() => {})),
+  attachLogger: vi.fn(),
 }));

@@ -1,0 +1,61 @@
+{
+  "app": {
+    "title": "TauReact",
+    "version": "v{{version}}"
+  },
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "about": "About"
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "settings": {
+    "appearance": "Appearance",
+    "general": "General",
+    "autoLaunch": "Launch at startup",
+    "autoLaunchDesc": "Automatically start TauReact when you log in",
+    "telemetry": "Error telemetry",
+    "telemetryDesc": "Send anonymous crash reports to help improve the app"
+  },
+  "ipc": {
+    "title": "IPC Demo",
+    "ping": "Ping",
+    "response": "Response:"
+  },
+  "fileDrop": {
+    "title": "Image Drop",
+    "hint": "Drag & drop images here to preview",
+    "dropHere": "Drop images here"
+  },
+  "fileDialog": {
+    "title": "File Dialogs",
+    "open": "Open File",
+    "save": "Save File"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "send": "Send Notification",
+    "sent": "Notification sent!"
+  },
+  "language": {
+    "title": "Language"
+  },
+  "about": {
+    "description": "A production-ready desktop application boilerplate built with Tauri, React, TypeScript, and Tailwind CSS."
+  },
+  "offline": {
+    "message": "You are offline"
+  },
+  "updater": {
+    "available": "Update available: v{{version}}",
+    "downloading": "Downloading update...",
+    "ready": "Update ready to install",
+    "restart": "Restart & Update",
+    "failed": "Update failed"
+  }
+}

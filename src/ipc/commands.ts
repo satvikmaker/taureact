@@ -5,17 +5,13 @@
  * ensuring the arguments and return type match the Rust handler.
  */
 import { invoke } from "@tauri-apps/api/core";
-import type { IpcSchema } from "./schema";
+import type { IpcSchema, ContextMenuItem } from "./schema";
 
 // ── Typed invoke helper ──────────────────────────────────────────────
-// Maps IpcSchema arg tuples to the `invoke()` args object format that
-// Tauri expects.
 
 type CommandArgs<C extends keyof IpcSchema> = IpcSchema[C]["args"];
 type CommandReturn<C extends keyof IpcSchema> = IpcSchema[C]["return"];
 
-// Build the invoke args object from the schema's positional arg tuple.
-// Tauri invoke sends named args, so each command has a specific mapping.
 const ARG_NAMES: Record<keyof IpcSchema, string[]> = {
   get_app_version: [],
   get_app_path: ["name"],
@@ -26,6 +22,11 @@ const ARG_NAMES: Record<keyof IpcSchema, string[]> = {
   open_window: ["name", "route"],
   get_file_metadata: ["paths"],
   read_file_bytes: ["path"],
+  show_context_menu: ["windowLabel", "items"],
+  secure_set: ["key", "value"],
+  secure_get: ["key"],
+  secure_delete: ["key"],
+  set_progress: ["value"],
   ping: [],
 };
 
@@ -54,12 +55,24 @@ export const ipc = {
   getAppVersion: () => ipcInvoke("get_app_version"),
   getAppPath: (name: string) => ipcInvoke("get_app_path", name),
   appReady: () => ipcInvoke("app_ready"),
-  reportError: (report: { message: string; stack?: string; componentStack?: string }) =>
-    ipcInvoke("report_error", report),
+  reportError: (report: {
+    message: string;
+    stack?: string;
+    componentStack?: string;
+  }) => ipcInvoke("report_error", report),
   settingsGet: (key: string) => ipcInvoke("settings_get", key),
-  settingsSet: (key: string, value: unknown) => ipcInvoke("settings_set", key, value),
-  openWindow: (name: string, route: string) => ipcInvoke("open_window", name, route),
+  settingsSet: (key: string, value: unknown) =>
+    ipcInvoke("settings_set", key, value),
+  openWindow: (name: string, route: string) =>
+    ipcInvoke("open_window", name, route),
   getFileMetadata: (paths: string[]) => ipcInvoke("get_file_metadata", paths),
   readFileBytes: (path: string) => ipcInvoke("read_file_bytes", path),
+  showContextMenu: (windowLabel: string, items: ContextMenuItem[]) =>
+    ipcInvoke("show_context_menu", windowLabel, items),
+  secureSet: (key: string, value: string) =>
+    ipcInvoke("secure_set", key, value),
+  secureGet: (key: string) => ipcInvoke("secure_get", key),
+  secureDelete: (key: string) => ipcInvoke("secure_delete", key),
+  setProgress: (value: number | null) => ipcInvoke("set_progress", value),
   ping: () => ipcInvoke("ping"),
 } as const;

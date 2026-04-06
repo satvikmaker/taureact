@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { ipc } from "@/ipc";
+import { reportCrash } from "@/lib/crash-reporter";
 
 interface Props {
   children: ReactNode;
@@ -19,20 +19,22 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    ipc
-      .reportError({
-        message: error.message,
-        stack: error.stack,
-        componentStack: info.componentStack ?? undefined,
-      })
-      .catch(console.error);
+    reportCrash({
+      message: error.message,
+      stack: error.stack,
+      componentStack: info.componentStack ?? undefined,
+      timestamp: new Date().toISOString(),
+    }).catch(() => {}); // Best-effort
   }
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="flex flex-col items-center justify-center h-full gap-4 p-8">
+        <div
+          className="flex flex-col items-center justify-center h-full gap-4 p-8"
+          role="alert"
+        >
           <h2 className="text-lg font-semibold">Something went wrong</h2>
           <pre className="max-w-[600px] p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-auto text-[13px]">
             {this.state.error?.message}

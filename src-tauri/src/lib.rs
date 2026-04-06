@@ -5,6 +5,7 @@ mod updater;
 mod window_state;
 
 use tauri::{Emitter, Manager, WebviewWindowBuilder};
+use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,6 +19,17 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
+        .plugin(
+            tauri_plugin_sql::Builder::default()
+                .add_migrations("sqlite:app.db", vec![])
+                .build(),
+        )
         .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.set_focus();
@@ -38,6 +50,11 @@ pub fn run() {
             commands::settings::settings_get,
             commands::settings::settings_set,
             commands::window::open_window,
+            commands::context_menu::show_context_menu,
+            commands::keyring::secure_set,
+            commands::keyring::secure_get,
+            commands::keyring::secure_delete,
+            commands::progress::set_progress,
             commands::ping,
         ])
         .setup(|app| {
@@ -87,15 +104,30 @@ pub fn run() {
                 main_window.open_devtools();
             }
 
-            // ── Splash fallback timeout ──────────────────────────
-            // If the frontend fails to call app_ready within 15s,
-            // show the main window anyway to avoid a blank screen.
+            // ── Global shortcut: CmdOrCtrl+Shift+Space → show/hide ──
+            let show_hide = Shortcut::new(
+                Some(Modifiers::SUPER | Modifiers::SHIFT),
+                Code::Space,
+            );
+            let handle = app.handle().clone();
+            app.global_shortcut().on_shortcut(show_hide, move |_app, _shortcut, _event| {
+                if let Some(window) = handle.get_webview_window("main") {
+                    if window.is_visible().unwrap_or(false) {
+                        let _ = window.hide();
+                    } else {
+                        let _ = window.show();
+                        let _ = window.set_focus();
+                    }
+                }
+            }).unwrap_or_else(|e| log::warn!("Failed to register global shortcut: {}", e));
+
+            // ── Splash fallback timeout ──────────────────────────────
             let fallback_handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 tokio::time::sleep(std::time::Duration::from_secs(15)).await;
                 if let Some(main) = fallback_handle.get_webview_window("main") {
                     if !main.is_visible().unwrap_or(true) {
-                        log::warn!("app_ready() not called after 15s — showing main window as fallback");
+                        log::warn!("app_ready() not called after 15s — showing main window");
                         let _ = main.show();
                         let _ = main.set_focus();
                         if let Some(splash) = fallback_handle.get_webview_window("splash") {
@@ -105,6 +137,7 @@ pub fn run() {
                 }
             });
 
+            commands::context_menu::init_context_menu_handler(app);
             tray::create_tray(app)?;
             menu::create_menu(app)?;
             updater::setup_updater(app)?;
