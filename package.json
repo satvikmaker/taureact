@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
     "clean": "rm -rf dist src-tauri/target",
     "clean:sourcemaps": "node scripts/clean-sourcemaps.mjs",
     "prebuild": "node scripts/clean-sourcemaps.mjs"
