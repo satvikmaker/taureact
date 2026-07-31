@@ -41,16 +41,21 @@ pub fn create_menu(app: &App) -> Result<(), Box<dyn std::error::Error>> {
     let reload = MenuItemBuilder::with_id("reload", "Reload")
         .accelerator("CmdOrCtrl+R")
         .build(app)?;
+    // Tauri gates open/close/is_devtools_open on the same cfg, so the menu entry
+    // must not exist in release builds unless the `devtools` feature is on.
+    #[cfg(any(debug_assertions, feature = "devtools"))]
     let devtools = MenuItemBuilder::with_id("devtools", "Toggle Developer Tools")
         .accelerator("CmdOrCtrl+Shift+I")
         .build(app)?;
 
-    let view_menu = SubmenuBuilder::new(app, "View")
-        .item(&reload)
-        .item(&devtools)
-        .separator()
-        .fullscreen()
-        .build()?;
+    let view_menu = {
+        let builder = SubmenuBuilder::new(app, "View").item(&reload);
+
+        #[cfg(any(debug_assertions, feature = "devtools"))]
+        let builder = builder.item(&devtools);
+
+        builder.separator().fullscreen().build()?
+    };
 
     let window_menu = SubmenuBuilder::new(app, "Window")
         .minimize()
@@ -91,6 +96,7 @@ pub fn create_menu(app: &App) -> Result<(), Box<dyn std::error::Error>> {
                 let _ = window.eval("location.reload()");
             }
         }
+        #[cfg(any(debug_assertions, feature = "devtools"))]
         "devtools" => {
             if let Some(window) = app.get_webview_window("main") {
                 if window.is_devtools_open() {

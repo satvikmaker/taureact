@@ -50,7 +50,10 @@ pub fn app_ready(app: AppHandle) {
             log::warn!("Failed to focus main window: {}", e);
         }
 
-        // DEBUG_PROD: open devtools in production builds when env var is set
+        // DEBUG_PROD: open devtools when the env var is set. Tauri only compiles
+        // open_devtools() in debug builds or under its `devtools` feature, so a
+        // release build needs `--features devtools` for this to be active.
+        #[cfg(any(debug_assertions, feature = "devtools"))]
         if std::env::var("DEBUG_PROD").unwrap_or_default() == "true" {
             main_win.open_devtools();
         }

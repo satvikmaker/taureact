@@ -11,6 +11,12 @@ rust-version = "1.88"
 name = "taureact_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
+[features]
+# Ship browser devtools in RELEASE builds (`cargo build --release --features devtools`,
+# or `npm run build -- --features devtools`). Devtools are always available in debug
+# builds, so this is only needed for production diagnostics.
+devtools = ["tauri/devtools"]
+
 [build-dependencies]
 tauri-build = { version = "2.6.3", features = [] }
 
