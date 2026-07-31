@@ -1,12 +1,17 @@
 import js from "@eslint/js";
+import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
 
-export default tseslint.config(
-  { ignores: ["dist/**", "src-tauri/**", "scripts/**"] },
+export default defineConfig([
+  // Trailing slashes skip directory traversal outright rather than walking then filtering.
+  globalIgnores(["dist/", "src-tauri/", "scripts/"]),
+
+  // Application and test sources.
   {
     files: ["src/**/*.{ts,tsx}", "tests/**/*.{ts,tsx}"],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    // `extends` flattens config arrays, so tseslint.configs.recommended needs no spread.
+    extends: [js.configs.recommended, tseslint.configs.recommended],
     plugins: { "react-hooks": reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -15,5 +20,11 @@ export default tseslint.config(
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
     },
-  }
-);
+  },
+
+  // Root-level build configs, now reachable since `lint` runs `eslint .`.
+  {
+    files: ["*.config.{js,ts,mts}"],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+  },
+]);
