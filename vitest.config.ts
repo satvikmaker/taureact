@@ -15,6 +15,9 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
     coverage: {
+      // Explicit (it is also the default) to stay in sync with the
+      // @vitest/coverage-v8 devDependency that --coverage requires.
+      provider: "v8",
       reporter: ["text", "json", "html"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/vite-env.d.ts", "src/main.tsx"],
