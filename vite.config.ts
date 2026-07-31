@@ -5,7 +5,7 @@ import path from "path";
 
 const host = process.env.TAURI_DEV_HOST;
 
-export default defineConfig(async () => ({
+export default defineConfig(() => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -32,7 +32,7 @@ export default defineConfig(async () => ({
   build: {
     target:
       process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari14",
-    minify: !process.env.TAURI_ENV_DEBUG ? "esbuild" : false,
+    minify: process.env.TAURI_ENV_DEBUG ? false : ("esbuild" as const),
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
   },
 }));
