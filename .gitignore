@@ -34,3 +34,8 @@ coverage/
 
 # Tauri
 WixTools/
+
+# TypeScript incremental build artifacts (emitted by `tsc -b`)
+*.tsbuildinfo
+vite.config.d.ts
+vitest.config.d.ts

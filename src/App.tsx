@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { HashRouter, Routes, Route, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, NavLink, useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { TitleBar, OfflineIndicator, UpdaterUI } from "@/components";
 import { ToastProvider } from "@/components/Toast";
