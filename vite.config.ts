@@ -9,7 +9,7 @@ export default defineConfig(() => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   clearScreen: false,
@@ -32,7 +32,8 @@ export default defineConfig(() => ({
   build: {
     target:
       process.env.TAURI_ENV_PLATFORM === "windows" ? "chrome105" : "safari14",
-    minify: process.env.TAURI_ENV_DEBUG ? false : ("esbuild" as const),
+    // Vite 8 replaced esbuild with Oxc; "esbuild" now requires installing esbuild separately.
+    minify: process.env.TAURI_ENV_DEBUG ? false : ("oxc" as const),
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
   },
 }));

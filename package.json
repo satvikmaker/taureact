@@ -19,7 +19,7 @@
     "prebuild": "node scripts/clean-sourcemaps.mjs"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/vite": "^4.3.3",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-autostart": "^2.5.1",
     "@tauri-apps/plugin-deep-link": "^2.0.0",
@@ -39,7 +39,7 @@
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.2",
     "react-router": "^8.3.0",
-    "tailwindcss": "^4.2.2",
+    "tailwindcss": "^4.3.3",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
@@ -51,14 +51,14 @@
     "@types/node": "^26.1.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^6.0.5",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^29.1.1",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.58.0",
-    "vite": "^6.0.0",
+    "vite": "^8.2.0",
     "vitest": "^4.1.10"
   }
 }
