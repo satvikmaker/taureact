@@ -37,10 +37,10 @@ pub struct ErrorReport {
 /// Closes the splash screen and shows the main window.
 #[tauri::command]
 pub fn app_ready(app: AppHandle) {
-    if let Some(splash) = app.get_webview_window("splash") {
-        if let Err(e) = splash.close() {
-            log::error!("Failed to close splash window: {}", e);
-        }
+    if let Some(splash) = app.get_webview_window("splash")
+        && let Err(e) = splash.close()
+    {
+        log::error!("Failed to close splash window: {}", e);
     }
     if let Some(main_win) = app.get_webview_window("main") {
         if let Err(e) = main_win.show() {
