@@ -27,6 +27,18 @@ Paste the **public key** into `plugins.updater.pubkey`:
 
 Replace `YOUR_USERNAME` with your GitHub username or org.
 
+Then enable updater artifact generation in the same file:
+
+```json
+"bundle": {
+  "createUpdaterArtifacts": true
+}
+```
+
+This ships as `false` because Tauri refuses to build once a `pubkey` is set
+unless `TAURI_SIGNING_PRIVATE_KEY` is also present — so leaving it on would
+break every build until you have completed step 1.
+
 ## 3. Set CI secrets
 
 In your GitHub repo → Settings → Secrets → Actions, add:
