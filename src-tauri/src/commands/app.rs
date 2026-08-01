@@ -37,10 +37,10 @@ pub struct ErrorReport {
 /// Closes the splash screen and shows the main window.
 #[tauri::command]
 pub fn app_ready(app: AppHandle) {
-    if let Some(splash) = app.get_webview_window("splash") {
-        if let Err(e) = splash.close() {
-            log::error!("Failed to close splash window: {}", e);
-        }
+    if let Some(splash) = app.get_webview_window("splash")
+        && let Err(e) = splash.close()
+    {
+        log::error!("Failed to close splash window: {}", e);
     }
     if let Some(main_win) = app.get_webview_window("main") {
         if let Err(e) = main_win.show() {
@@ -50,7 +50,10 @@ pub fn app_ready(app: AppHandle) {
             log::warn!("Failed to focus main window: {}", e);
         }
 
-        // DEBUG_PROD: open devtools in production builds when env var is set
+        // DEBUG_PROD: open devtools when the env var is set. Tauri only compiles
+        // open_devtools() in debug builds or under its `devtools` feature, so a
+        // release build needs `--features devtools` for this to be active.
+        #[cfg(any(debug_assertions, feature = "devtools"))]
         if std::env::var("DEBUG_PROD").unwrap_or_default() == "true" {
             main_win.open_devtools();
         }

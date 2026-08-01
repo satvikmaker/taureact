@@ -34,10 +34,10 @@ pub fn run() {
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.set_focus();
             }
-            if args.len() > 1 {
-                if let Err(e) = app.emit("deep-link:received", &args[1]) {
-                    log::error!("Failed to emit deep-link event: {}", e);
-                }
+            if args.len() > 1
+                && let Err(e) = app.emit("deep-link:received", &args[1])
+            {
+                log::error!("Failed to emit deep-link event: {}", e);
             }
         }))
         .invoke_handler(tauri::generate_handler![
@@ -88,12 +88,11 @@ pub fn run() {
                             window_state::save(&main_for_events);
                         }
                         tauri::WindowEvent::Resized(_) => {
-                            if let Ok(maximized) = main_for_events.is_maximized() {
-                                if let Err(e) =
+                            if let Ok(maximized) = main_for_events.is_maximized()
+                                && let Err(e) =
                                     main_for_events.emit("window:maximized-changed", maximized)
-                                {
-                                    log::error!("Failed to emit maximized event: {}", e);
-                                }
+                            {
+                                log::error!("Failed to emit maximized event: {}", e);
                             }
                         }
                         _ => {}
@@ -125,14 +124,14 @@ pub fn run() {
             let fallback_handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 tokio::time::sleep(std::time::Duration::from_secs(15)).await;
-                if let Some(main) = fallback_handle.get_webview_window("main") {
-                    if !main.is_visible().unwrap_or(true) {
-                        log::warn!("app_ready() not called after 15s — showing main window");
-                        let _ = main.show();
-                        let _ = main.set_focus();
-                        if let Some(splash) = fallback_handle.get_webview_window("splash") {
-                            let _ = splash.close();
-                        }
+                if let Some(main) = fallback_handle.get_webview_window("main")
+                    && !main.is_visible().unwrap_or(true)
+                {
+                    log::warn!("app_ready() not called after 15s — showing main window");
+                    let _ = main.show();
+                    let _ = main.set_focus();
+                    if let Some(splash) = fallback_handle.get_webview_window("splash") {
+                        let _ = splash.close();
                     }
                 }
             });

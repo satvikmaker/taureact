@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "composite": true,
+    "types": ["node"],
     "noEmit": false,
     "emitDeclarationOnly": true,
     "strict": true,

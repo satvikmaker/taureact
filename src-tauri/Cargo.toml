@@ -3,36 +3,46 @@ name = "taureact"
 version = "0.1.0"
 description = "TauReact Desktop Application"
 authors = ["you"]
-edition = "2021"
+edition = "2024"
+# Floor is set by keyring 4 (1.88); edition 2024 alone would only need 1.85.
+rust-version = "1.88"
 
 [lib]
 name = "taureact_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
+[features]
+# Ship browser devtools in RELEASE builds (`cargo build --release --features devtools`,
+# or `npm run build -- --features devtools`). Devtools are always available in debug
+# builds, so this is only needed for production diagnostics.
+devtools = ["tauri/devtools"]
+
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2.6.3", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = ["tray-icon", "image-png"] }
-tauri-plugin-store = "2"
-tauri-plugin-updater = "2"
-tauri-plugin-log = "2"
-tauri-plugin-fs = "2"
-tauri-plugin-shell = "2"
-tauri-plugin-os = "2"
-tauri-plugin-process = "2"
-tauri-plugin-single-instance = "2"
-tauri-plugin-deep-link = "2"
-tauri-plugin-dialog = "2"
-tauri-plugin-notification = "2"
-tauri-plugin-global-shortcut = "2"
-tauri-plugin-autostart = "2"
-tauri-plugin-sql = { version = "2", features = ["sqlite"] }
-keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-log = "0.4"
-tokio = { version = "1", features = ["time"] }
+tauri = { version = "2.11.5", features = ["tray-icon", "image-png"] }
+tauri-plugin-store = "2.4.4"
+tauri-plugin-updater = "2.10.1"
+tauri-plugin-log = "2.9.0"
+tauri-plugin-fs = "2.5.1"
+tauri-plugin-shell = "2.3.5"
+tauri-plugin-os = "2.3.2"
+tauri-plugin-process = "2.3.1"
+tauri-plugin-single-instance = "2.4.3"
+tauri-plugin-deep-link = "2.4.9"
+tauri-plugin-dialog = "2.7.2"
+tauri-plugin-notification = "2.3.3"
+tauri-plugin-global-shortcut = "2.3.2"
+tauri-plugin-autostart = "2.5.1"
+tauri-plugin-sql = { version = "2.4.0", features = ["sqlite"] }
+# keyring 4 restructured onto keyring-core and dropped the per-platform
+# feature flags; the default "v1" feature re-exports the v3 API unchanged.
+keyring = "4.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+log = "0.4.33"
+tokio = { version = "1.53", features = ["time"] }
 
 [profile.dev]
 incremental = true

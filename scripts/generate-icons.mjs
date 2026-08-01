@@ -1,16 +1,21 @@
 /**
- * Generate placeholder PNG icons for Tauri.
+ * Generate placeholder icons for Tauri.
  * Run: node scripts/generate-icons.mjs
  *
- * Replace the source icon (public/app-icon.svg) with your brand icon,
- * then run `npx tauri icon public/app-icon.png` to regenerate all sizes.
+ * Writes a 1024x1024 source PNG to public/app-icon.png, then delegates to
+ * `tauri icon` to produce the real platform icon set (.ico with the proper
+ * multi-image ICO container, .icns, and the PNG sizes).
  *
- * This script creates minimal valid PNGs as placeholders so the project
- * compiles before you have real icons.
+ * Do NOT write PNG bytes straight to icon.ico: Windows RC.EXE rejects it with
+ * "error RC2175: resource file ... is not in 3.00 format" and the build fails.
+ *
+ * To use your own artwork, replace public/app-icon.png (1024x1024) and run
+ * `npx tauri icon public/app-icon.png`.
  */
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { deflateSync } from "zlib";
+import { execFileSync } from "child_process";
 
 const ICONS_DIR = join(process.cwd(), "src-tauri", "icons");
 mkdirSync(ICONS_DIR, { recursive: true });
@@ -85,22 +90,26 @@ function crc32(buf) {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-const sizes = [
-  { name: "32x32.png", w: 32, h: 32 },
-  { name: "128x128.png", w: 128, h: 128 },
-  { name: "128x128@2x.png", w: 256, h: 256 },
-];
+// Write the 1024x1024 source that `tauri icon` derives every platform icon from.
+const SOURCE = join(process.cwd(), "public", "app-icon.png");
+mkdirSync(join(process.cwd(), "public"), { recursive: true });
+writeFileSync(SOURCE, createPng(1024, 1024));
+console.log("  Created public/app-icon.png (1024x1024 source)");
 
-for (const { name, w, h } of sizes) {
-  const png = createPng(w, h);
-  writeFileSync(join(ICONS_DIR, name), png);
-  console.log(`  Created ${name} (${w}x${h})`);
+// Delegate to the Tauri CLI, which emits a real ICO container and ICNS.
+try {
+  execFileSync("npx", ["tauri", "icon", SOURCE, "--output", ICONS_DIR], {
+    stdio: "inherit",
+  });
+  // tauri icon always emits mobile asset trees; this boilerplate is desktop-only.
+  for (const dir of ["android", "ios"]) {
+    rmSync(join(ICONS_DIR, dir), { recursive: true, force: true });
+  }
+  console.log("\nDone. Replace public/app-icon.png with your artwork and re-run.\n");
+} catch {
+  console.error(
+    "\n`tauri icon` failed. Install deps first (npm install), then run:\n" +
+      "  npx tauri icon public/app-icon.png --output src-tauri/icons\n"
+  );
+  process.exit(1);
 }
-
-// For .icns and .ico, create symlinks/copies from the 256px PNG
-// (Real builds should use `tauri icon` to generate proper .icns/.ico)
-writeFileSync(join(ICONS_DIR, "icon.icns"), createPng(256, 256));
-writeFileSync(join(ICONS_DIR, "icon.ico"), createPng(256, 256));
-console.log("  Created icon.icns and icon.ico (placeholder PNGs)");
-
-console.log("\nDone! For production icons, replace with:\n  npx tauri icon path/to/your-1024x1024-icon.png\n");

@@ -105,10 +105,10 @@ pub fn save(window: &WebviewWindow) {
     };
 
     let app = window.app_handle();
-    if let Ok(store) = app.store(STORE_PATH) {
-        if let Ok(val) = serde_json::to_value(&state) {
-            store.set(STORE_KEY, val);
-            let _ = store.save();
-        }
+    if let Ok(store) = app.store(STORE_PATH)
+        && let Ok(val) = serde_json::to_value(&state)
+    {
+        store.set(STORE_KEY, val);
+        let _ = store.save();
     }
 }
